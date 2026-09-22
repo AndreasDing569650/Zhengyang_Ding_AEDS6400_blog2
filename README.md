@@ -29,8 +29,8 @@ The analysis examines:
 
 ## Repository Structure
 
+```text
 Zhengyang_Ding_AEDS6400_blog2/
-
 ├── code/
 │   ├── 1_scrape.R
 │   ├── 2_clean.R
@@ -58,3 +58,4 @@ Zhengyang_Ding_AEDS6400_blog2/
 ├── README.md
 ├── .gitignore
 └── AEDS6400_blog2.Rproj
+```
