@@ -56,6 +56,5 @@ Zhengyang_Ding_AEDS6400_blog2/
 │   └── rating_by_genre.csv
 │
 ├── README.md
-├── .gitignore
 └── AEDS6400_blog2.Rproj
 ```
