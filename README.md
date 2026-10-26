@@ -1,7 +1,4 @@
-# AEDS6400 Blog Post 2
-
-## Project title
-Are Ratings of Films Within Top Lists Still Valuable?
+# AEDS6400 Blog Post 2: Are Ratings of Films Within Top Lists Still Valuable?
 
 ## Objective
 This project evaluates whether visible film ratings remain informative for audiences when browsing a top film list. The analysis uses Douban's Top 250 movie list as a case study. The workflow follows three stages:
@@ -62,7 +59,7 @@ Zhengyang_Ding_AEDS6400_blog2/
 └── .Rhistory (if present)
 ```
 
-## How the code works
+## How the code works for reproduction
 
 ### 1) Scraping the data (`code/1_scrape.R`)
 This script loops through the ten Douban Top 250 pages and downloads each page into the repository's `data/raw_data/html_data/` folder. It then extracts:
@@ -83,15 +80,12 @@ data/raw_data/data_scraped.csv
 The script uses the repository location to determine the project root dynamically and writes outputs to the correct folders. It does not depend on any local Windows directory or machine-specific absolute path.
 
 ### 2) Cleaning the data (`code/2_clean.R`)
-This script reads the raw CSV from `data/raw_data/data_scraped.csv`, fixes data-quality issues, and standardizes several categorical variables. It performs the following tasks:
+This script reads the raw CSV from `data/raw_data/data_scraped.csv`, fixes data-quality issues, and standardizes several categorical variables. It mainly performs the following tasks in detail:
 
-- removes malformed rows and inconsistent entries
-- corrects a few year/country/genre values
-- strips non-Chinese characters and normalizes labels
+- corrects a few malformed year/country/genre values
 - maps country names to standardized codes such as `USA`, `CHNC`, `CHNH`, `CHNT`, `JPN`, `KOR`, and `FRA`
-- maps genre names to standardized labels such as `Drama`, `Comedy`, `Crime`, `Action`, and `Animation`
+- translates genre names to standardized labels such as `Drama`, `Comedy`, `Crime`, `Action`, and `Animation`
 - converts `Rank`, `Year`, and `Rating` to numeric types
-- rescales the rating values to the numeric scale used in the analysis
 
 The cleaned dataset is written to:
 
@@ -128,19 +122,6 @@ figure/
 ├── country.png
 └── genre.png
 ```
-
-## Path handling and portability
-The scripts are designed to run from a cloned GitHub repository without requiring any local deployment or user-specific folder setup.
-
-Instead of using absolute paths such as:
-
-```r
-D:/Rproject/6400-blog2/...
-```
-
-the scripts determine the project root relative to the script location and build the necessary paths with `file.path(...)`.
-
-This means the project can be reproduced on different machines simply by cloning the repository and running the scripts in sequence.
 
 ## Reproducing the analysis
 
@@ -184,19 +165,3 @@ The corresponding figures include:
 - `figure/year.png`
 - `figure/country.png`
 - `figure/genre.png`
-
-## Summary of the code logic
-
-```text
-Website scrape -> raw dataset -> cleaned dataset -> summary statistics -> figures and CSV outputs
-```
-
-This workflow is reproducible as long as:
-
-- the required R packages are installed
-- the repository is cloned locally
-- the scripts are run in the order shown above
-- the script path logic remains unchanged
-
-## Final note
-This repository is a compact example of a small reproducible data-analysis project in R: data collection, cleaning, exploratory analysis, and result export. The code is intentionally simple and transparent, making it easy to trace the full analysis pipeline from raw data retrieval through final visualization.
