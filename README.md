@@ -55,8 +55,7 @@ Zhengyang_Ding_AEDS6400_blog2/
 │   ├── rating_by_country.csv
 │   └── rating_by_genre.csv
 ├── .gitignore
-├── AEDS6400_blog2.Rproj
-└── .Rhistory (if present)
+└── AEDS6400_blog2.Rproj
 ```
 
 ## How the code works for reproduction
