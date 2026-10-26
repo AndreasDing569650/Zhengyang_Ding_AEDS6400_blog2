@@ -1,36 +1,49 @@
-library(rvest)
-library(dplyr)
-library(stringr)
-library(purrr)
+project_root <- if (!is.null(sys.frames()[[1]]$ofile)) {
+  script_dir <- dirname(normalizePath(sys.frames()[[1]]$ofile))
+  if (basename(script_dir) == "code") {
+    dirname(script_dir)
+  } else {
+    script_dir
+  }
+} else {
+  getwd()
+}
+
+raw_data_dir <- file.path(project_root, "data", "raw_data")
+html_data_dir <- file.path(raw_data_dir, "html_data")
+output_csv <- file.path(raw_data_dir, "data_scraped.csv")
+
+dir.create(raw_data_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(html_data_dir, recursive = TRUE, showWarnings = FALSE)
 
 for (i in 0:9) {
-  url <- paste(
+  url <- paste0(
     "https://movie.douban.com/top250?start=",
     25 * i,
-    "&filter=&type=",
-    sep = ""
+    "&filter=&type="
   )
   webpage <- read_html(url)
-  writeLines(
-    as.character(webpage),
-    paste0("douban_top250_page_", i + 1, ".html")
-  )
+  html_file <- file.path(html_data_dir, sprintf("douban_top250_page_%d.html", i + 1))
+  writeLines(as.character(webpage), html_file, useBytes = TRUE)
 }
 
 for (i in 0:9) {
-  webpage <- read_html(
-    paste0("douban_top250_page_", i + 1, ".html")
-  )
+  html_file <- file.path(html_data_dir, sprintf("douban_top250_page_%d.html", i + 1))
+  webpage <- read_html(html_file)
+
   rank_data <- webpage %>%
     html_nodes("em") %>%
     html_text() %>%
     as.numeric()
+
   title_data <- webpage %>%
     html_nodes(".title:nth-child(1)") %>%
     html_text()
+
   total_data <- webpage %>%
     html_nodes(".bd p:nth-child(1)") %>%
     html_text()
+
   total_data <- strsplit(total_data, "\n")
   total_data[1] <- NULL
   total_data <- lapply(
@@ -39,9 +52,10 @@ for (i in 0:9) {
       x[-c(1, 2, 4)]
     }
   )
-  
+
   total_data <- unlist(total_data)
   total_data <- strsplit(total_data, "/")
+
   year_data <- lapply(
     total_data,
     function(x) {
@@ -49,8 +63,9 @@ for (i in 0:9) {
     }
   ) %>%
     unlist()
-  
+
   year_data <- sub("^\\s+", "", year_data)
+
   country_data <- lapply(
     total_data,
     function(x) {
@@ -58,7 +73,7 @@ for (i in 0:9) {
     }
   ) %>%
     unlist()
-  
+
   country_data <- strsplit(country_data, " ")
   country_data <- lapply(
     country_data,
@@ -67,6 +82,7 @@ for (i in 0:9) {
     }
   ) %>%
     unlist()
+
   genre_data <- lapply(
     total_data,
     function(x) {
@@ -74,7 +90,7 @@ for (i in 0:9) {
     }
   ) %>%
     unlist()
-  
+
   genre_data <- strsplit(genre_data, " ")
   genre_data <- lapply(
     genre_data,
@@ -83,12 +99,12 @@ for (i in 0:9) {
     }
   ) %>%
     unlist()
-  
+
   rating_data <- webpage %>%
     html_nodes(".rating_num") %>%
     html_text() %>%
     as.numeric()
-  
+
   if (i == 0) {
     rank <- rank_data
     title <- title_data
@@ -124,19 +140,9 @@ movie_raw <- data.frame(
   Rating = c(rating, rep(NA, max_length - length(rating)))
 )
 
-str(movie_raw)
-head(movie_raw)
-
-length(rank)
-length(title)
-length(year)
-length(country)
-length(genre)
-length(rating)
-
 write.csv(
   movie_raw,
-  "D:/Rproject/6400-blog2/data/raw_data/data_scraped.csv",
+  output_csv,
   row.names = FALSE,
-  fileEncoding = "GB18030"
+  fileEncoding = "UTF-8"
 )
