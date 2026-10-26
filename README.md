@@ -4,12 +4,12 @@
 Are Ratings of Films Within Top Lists Still Valuable?
 
 ## Objective
-This project evaluates whether visible film ratings remain informative for audiences when looking at a top film list. The analysis uses Douban's Top 250 movie list as a case study. Using the `rvest` package in R, the project scrapes movie rankings and ratings from the website, cleans the data, and then compares average ratings across ranking groups, decades, countries/regions, and genres.
+This project evaluates whether visible film ratings remain informative for audiences when looking at a top film list. The analysis uses Douban's Top 250 movie list as a case study. Using the `rvest` package in R, the project scrapes movie rankings and ratings from the HTML website, cleans the data, and then compares average ratings across ranking groups, decades, countries/regions, and genres.
 
 The study is designed to reproduce a simple data-analysis workflow:
 
-1. Collect raw movie-list information from a public website.
-2. Clean and standardize inconsistent strings and codes.
+1. Collect raw movie-list information from a public website (html).
+2. Clean the raw data scraped from the html web page.
 3. Aggregate ratings by key categories.
 4. Visualize the results and save summary tables.
 
@@ -38,7 +38,6 @@ The variables collected include:
 ```text
 Zhengyang_Ding_AEDS6400_blog2/
 ├── README.md
-├── AEDS6400_blog2.Rproj
 ├── code/
 │   ├── 1_scrape.R
 │   ├── 2_clean.R
@@ -62,7 +61,7 @@ Zhengyang_Ding_AEDS6400_blog2/
 └── .gitignore
 ```
 
-## How the analysis works
+## How the code works
 
 ### 1) Scraping the data (`code/1_scrape.R`)
 This script loops through the first 10 pages of the Douban Top 250 page. It reads each page with `read_html()`, extracts ranking numbers, titles, years, countries, genres, and ratings, and combines them into a single data frame.
