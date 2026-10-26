@@ -1,10 +1,30 @@
+project_root <- if (!is.null(sys.frames()[[1]]$ofile)) {
+  script_dir <- dirname(normalizePath(sys.frames()[[1]]$ofile))
+  if (basename(script_dir) == "code") {
+    dirname(script_dir)
+  } else {
+    script_dir
+  }
+} else {
+  getwd()
+}
+
+input_csv <- file.path(project_root, "data", "raw_data", "data_scraped.csv")
+output_csv <- file.path(project_root, "data", "processed_data", "data_cleaned.csv")
+
+dir.create(dirname(output_csv), recursive = TRUE, showWarnings = FALSE)
+
+if (!file.exists(input_csv)) {
+  stop("Input file not found: ", input_csv)
+}
+
 movie_raw <- read.csv(
-  "D:/Rproject/6400-blog2/data/raw_data/data_scraped.csv",
+  input_csv,
   header = TRUE,
   stringsAsFactors = FALSE,
   check.names = FALSE,
   colClasses = "character",
-  fileEncoding = "GB18030"
+  fileEncoding = "UTF-8"
 )
 
 movie_raw[] <- lapply(movie_raw, function(x) {
@@ -12,6 +32,7 @@ movie_raw[] <- lapply(movie_raw, function(x) {
   x <- gsub("\\?", "", x)
   x
 })
+
 movie_raw$Year[53] <- "1961"
 movie_raw$Country[53] <- "中国大陆"
 movie_raw$Genre[53] <- "动画"
@@ -27,16 +48,13 @@ remove_pos <- c(54, 55, 109, 169)
 year_clean <- movie_raw$Year[-remove_pos]
 country_clean <- movie_raw$Country[-remove_pos]
 genre_clean <- movie_raw$Genre[-remove_pos]
-length(year_clean)
-length(country_clean)
-length(genre_clean)
+
 movie_raw$Year[1:250] <- year_clean
 movie_raw$Country[1:250] <- country_clean
 movie_raw$Genre[1:250] <- genre_clean
 movie_raw <- movie_raw[!is.na(movie_raw$Rank), ]
 
 movie_raw$Country <- gsub("[^\\p{Han}]", "", movie_raw$Country, perl = TRUE)
-unique(movie_raw$Country)
 country_code <- c(
   "美国" = "USA",
   "中国大陆" = "CHNC",
@@ -63,7 +81,6 @@ country_code <- c(
 movie_raw$Country <- unname(country_code[movie_raw$Country])
 
 movie_raw$Genre <- gsub("[^\\p{Han}]", "", movie_raw$Genre, perl = TRUE)
-unique(movie_raw$Genre)
 genre_code <- c(
   "犯罪" = "Crime",
   "剧情" = "Drama",
@@ -81,20 +98,14 @@ genre_code <- c(
 )
 movie_raw$Genre <- unname(genre_code[movie_raw$Genre])
 
-movie_raw$Rank <- as.numeric(
-  gsub("[^0-9]", "", movie_raw$Rank)
-)
-movie_raw$Year <- as.numeric(
-  gsub("[^0-9]", "", movie_raw$Year)
-)
-movie_raw$Rating <- as.numeric(
-  gsub("[^0-9]", "", movie_raw$Rating)
-)
-movie_raw$Rating <- movie_raw$Rating/10
+movie_raw$Rank <- as.numeric(gsub("[^0-9]", "", movie_raw$Rank))
+movie_raw$Year <- as.numeric(gsub("[^0-9]", "", movie_raw$Year))
+movie_raw$Rating <- as.numeric(gsub("[^0-9]", "", movie_raw$Rating))
+movie_raw$Rating <- movie_raw$Rating / 10
 
 write.csv(
   movie_raw,
-  "D:/Rproject/6400-blog2/data/processed_data/data_cleaned.csv",
+  output_csv,
   row.names = FALSE,
-  fileEncoding = "GB18030"
+  fileEncoding = "UTF-8"
 )
